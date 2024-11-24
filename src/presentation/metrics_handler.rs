@@ -1,6 +1,7 @@
 use axum::{http::StatusCode, response::IntoResponse, response::Json};
 use serde::Serialize;
 use serde_json::json;
+use sysinfo::System;
 
 use crate::models;
 
@@ -26,4 +27,31 @@ pub async fn get_metrics() -> impl IntoResponse {
     };
 
     (StatusCode::OK, Json(json!(metrics)))
+}
+
+pub async fn get_cpuload1() -> impl IntoResponse {
+    let load_avg: sysinfo::LoadAvg = System::load_average();
+    Json(json!(load_avg.one))
+}
+
+pub async fn get_memusage() -> impl IntoResponse {
+    let sys = System::new_all();
+    let mem = format_memory_size(sys.used_memory());
+    Json(json!(mem))
+}
+
+fn format_memory_size(bytes: u64) -> String {
+    const UNITS: &[(&str, u64)] = &[
+        ("GB", 1024 * 1024 * 1024),
+        ("MB", 1024 * 1024),
+        ("KB", 1024),
+    ];
+
+    for &(unit, size) in UNITS {
+        if bytes >= size {
+            return format!("{:.2} {}", bytes as f64 / size as f64, unit);
+        }
+    }
+
+    format!("{} Bytes", bytes)
 }

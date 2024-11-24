@@ -1,4 +1,4 @@
-use axum::{http::StatusCode, response::IntoResponse, response::Json};
+use axum::{response::IntoResponse, response::Json};
 use rand::Rng;
 use serde::Serialize;
 use serde_json::json;
@@ -13,5 +13,5 @@ pub async fn roll_1d6() -> impl IntoResponse {
     let i: i32 = rnd.gen_range(1..6);
     let dice: Dice = Dice { dice: i };
 
-    (StatusCode::OK, Json(json!(dice)))
+    Json(json!(dice))
 }
