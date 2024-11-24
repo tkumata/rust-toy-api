@@ -32,7 +32,7 @@ pub async fn get_metrics() -> impl IntoResponse {
     Json(json!(metrics))
 }
 
-pub async fn get_cpuload1() -> impl IntoResponse {
+pub async fn get_cpuload() -> impl IntoResponse {
     let load_avg: sysinfo::LoadAvg = System::load_average();
     Json(json!(load_avg.one))
 }
