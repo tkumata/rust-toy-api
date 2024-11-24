@@ -23,7 +23,7 @@ pub async fn get_storage() -> Vec<DiskInfo> {
                 .mount_point()
                 .to_path_buf()
                 .to_string_lossy()
-                .into_owned(),
+                .to_string(),
             spaces: Spaces {
                 available_space: disk.available_space(),
                 total_space: disk.total_space(),
