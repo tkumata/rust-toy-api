@@ -1,26 +1,5 @@
 use serde::Serialize;
-use sysinfo::{Disks, System};
-
-pub async fn get_kernelname() -> Option<String> {
-    System::name()
-}
-
-pub async fn get_load() -> String {
-    let load_avg: sysinfo::LoadAvg = System::load_average();
-
-    [
-        load_avg.one.to_string(),
-        load_avg.five.to_string(),
-        load_avg.fifteen.to_string(),
-    ]
-    .join(",")
-}
-
-pub async fn get_mem() -> u64 {
-    let sys = System::new_all();
-
-    sys.used_memory()
-}
+use sysinfo::Disks;
 
 #[derive(Serialize)]
 struct DiskInfo {
