@@ -1,5 +1,4 @@
 mod application;
-mod models;
 mod presentation;
 
 use axum::{

@@ -2,22 +2,23 @@ use serde::Serialize;
 use sysinfo::Disks;
 
 #[derive(Serialize)]
-struct DiskInfo {
+pub(crate) struct DiskInfo {
     mount_point: String,
     spaces: Spaces,
 }
+
 #[derive(Serialize)]
 struct Spaces {
     available_space: u64,
     total_space: u64,
 }
 
-pub async fn get_storage() -> Vec<String> {
-    let mut disk_info: Vec<String> = Vec::new();
+pub async fn get_storage() -> Vec<DiskInfo> {
+    let mut disk_info = Vec::new();
     let disks = Disks::new_with_refreshed_list();
 
     for disk in disks.list() {
-        let diskinfo: DiskInfo = DiskInfo {
+        let diskinfo = DiskInfo {
             mount_point: disk
                 .mount_point()
                 .to_path_buf()
@@ -28,10 +29,8 @@ pub async fn get_storage() -> Vec<String> {
                 total_space: disk.total_space(),
             },
         };
-        let serialized: String = serde_json::to_string(&diskinfo).unwrap();
-        disk_info.push(serialized);
+        disk_info.push(diskinfo);
     }
 
-    // return Vec<String>
     disk_info
 }

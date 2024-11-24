@@ -3,14 +3,15 @@ use serde::Serialize;
 use serde_json::json;
 use sysinfo::System;
 
-use crate::models;
+use crate::application::disks_service;
+use crate::application::disks_service::DiskInfo;
 
 #[derive(Serialize)]
 struct Metrics {
     kernel_name: Option<String>,
     cpu_load: String,
     memory_usage: String,
-    disk_info: Vec<String>,
+    disk_info: Vec<DiskInfo>,
 }
 
 pub async fn get_metrics() -> impl IntoResponse {
@@ -19,7 +20,7 @@ pub async fn get_metrics() -> impl IntoResponse {
     let kernel = System::name();
     let load_avg = System::load_average();
     let used_mem = format_memory_size(sys.used_memory());
-    let disk_info = models::metrics::get_storage();
+    let disk_info = disks_service::get_storage();
 
     let metrics: Metrics = Metrics {
         kernel_name: kernel,
