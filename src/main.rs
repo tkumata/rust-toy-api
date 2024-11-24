@@ -1,5 +1,4 @@
 mod application;
-mod models;
 mod presentation;
 
 use axum::{
@@ -23,8 +22,11 @@ async fn main() {
         .route("/sleep/:wait_time", get(sleep_handler::make_sleep))
         // Get metrics.
         .route("/metrics", get(metrics_handler::get_metrics))
+        .route("/metrics/cpuload", get(metrics_handler::get_cpuload))
+        .route("/metrics/memusage", get(metrics_handler::get_memusage))
+        .route("/metrics/diskusage", get(metrics_handler::get_diskusage))
         // Convert /27 to 255.255.255.224
-        .route("/convert/v4prefix", post(convert_handler::convert_v4prefix))
+        .route("/convert/bitv4", post(convert_handler::convert_bitv4))
         // Convert 55,155,250 to 379BFA
         .route("/convert/rgb", post(convert_handler::convert_rgb));
 
