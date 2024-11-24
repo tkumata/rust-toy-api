@@ -43,6 +43,10 @@ pub async fn get_memusage() -> impl IntoResponse {
     Json(json!(mem))
 }
 
+pub async fn get_diskusage() -> impl IntoResponse {
+    Json(json!(disks_service::get_storage().await))
+}
+
 fn format_memory_size(bytes: u64) -> String {
     const UNITS: &[(&str, u64)] = &[
         ("GB", 1024 * 1024 * 1024),

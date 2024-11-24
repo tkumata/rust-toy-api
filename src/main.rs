@@ -24,6 +24,7 @@ async fn main() {
         .route("/metrics", get(metrics_handler::get_metrics))
         .route("/metrics/cpuload1", get(metrics_handler::get_cpuload1))
         .route("/metrics/memusage", get(metrics_handler::get_memusage))
+        .route("/metrics/diskusage", get(metrics_handler::get_diskusage))
         // Convert /27 to 255.255.255.224
         .route("/convert/bitv4", post(convert_handler::convert_bitv4))
         // Convert 55,155,250 to 379BFA
