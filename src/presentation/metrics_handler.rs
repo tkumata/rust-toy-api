@@ -51,7 +51,9 @@ pub async fn get_memusage() -> impl IntoResponse {
 }
 
 pub async fn get_diskusage() -> impl IntoResponse {
-    Json(json!(convert_disks_info(disks_service::get_storage().await)))
+    Json(json!(convert_disks_info(
+        disks_service::get_storage().await
+    )))
 }
 
 fn format_bytes(bytes: u64) -> String {
