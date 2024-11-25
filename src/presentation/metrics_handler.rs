@@ -5,6 +5,8 @@ use sysinfo::System;
 
 use crate::application::disks_service;
 use crate::application::disks_service::DiskInfo;
+use crate::application::memory_service;
+use crate::application::memory_service::MemInfo;
 
 #[derive(Serialize)]
 struct Metrics {
@@ -33,7 +35,7 @@ pub async fn get_metrics() -> impl IntoResponse {
     let kernel = System::name();
     let load_avg = System::load_average();
     let used_mem = format_bytes(sys.used_memory());
-    let diskinfo = convert_disks_info(disks_service::get_storage().await);
+    let diskinfo = converted_disks_info(disks_service::get_storage().await);
 
     let metrics: Metrics = Metrics {
         kernel_name: kernel,
@@ -51,18 +53,13 @@ pub async fn get_cpuload() -> impl IntoResponse {
 }
 
 pub async fn get_memusage() -> impl IntoResponse {
-    let sys = System::new_all();
-    let memu = format_bytes(sys.used_memory());
-    let memt = format_bytes(sys.total_memory());
-    let meminfo = ConvertedMemoryInfo {
-        memory_usage: memu,
-        memory_total: memt,
-    };
-    Json(json!(meminfo))
+    Json(json!(converted_memory_info(
+        memory_service::get_memusage().await
+    )))
 }
 
 pub async fn get_diskusage() -> impl IntoResponse {
-    Json(json!(convert_disks_info(
+    Json(json!(converted_disks_info(
         disks_service::get_storage().await
     )))
 }
@@ -83,13 +80,23 @@ fn format_bytes(bytes: u64) -> String {
     format!("{} Bytes", bytes)
 }
 
-fn convert_disks_info(disks: Vec<DiskInfo>) -> Vec<ConvertedDiskInfo> {
+fn converted_disks_info(disks: Vec<DiskInfo>) -> Vec<ConvertedDiskInfo> {
     disks
         .into_iter()
         .map(|disk| ConvertedDiskInfo {
             mount_point: disk.mount_point,
             available_space: format_bytes(disk.available_space),
             total_space: format_bytes(disk.total_space),
+        })
+        .collect()
+}
+
+fn converted_memory_info(memory: Vec<MemInfo>) -> Vec<ConvertedMemoryInfo> {
+    memory
+        .into_iter()
+        .map(|mem| ConvertedMemoryInfo {
+            memory_usage: format_bytes(mem.memory_usage),
+            memory_total: format_bytes(mem.memory_total),
         })
         .collect()
 }
