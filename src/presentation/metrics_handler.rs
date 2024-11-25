@@ -12,7 +12,7 @@ use crate::application::memory_service::MemInfo;
 struct Metrics {
     kernel_name: Option<String>,
     cpu_load: String,
-    memory_usage: String,
+    memory_usage: Vec<ConvertedMemoryInfo>,
     disk_info: Vec<ConvertedDiskInfo>,
 }
 
@@ -30,11 +30,9 @@ struct ConvertedMemoryInfo {
 }
 
 pub async fn get_metrics() -> impl IntoResponse {
-    let sys = System::new_all();
-
     let kernel = System::name();
     let load_avg = System::load_average();
-    let used_mem = format_bytes(sys.used_memory());
+    let used_mem = converted_memory_info(memory_service::get_memusage().await);
     let diskinfo = converted_disks_info(disks_service::get_storage().await);
 
     let metrics: Metrics = Metrics {
