@@ -21,6 +21,12 @@ struct ConvertedDiskInfo {
     total_space: String,
 }
 
+#[derive(Serialize)]
+struct ConvertedMemoryInfo {
+    memory_usage: String,
+    memory_total: String,
+}
+
 pub async fn get_metrics() -> impl IntoResponse {
     let sys = System::new_all();
 
@@ -46,8 +52,13 @@ pub async fn get_cpuload() -> impl IntoResponse {
 
 pub async fn get_memusage() -> impl IntoResponse {
     let sys = System::new_all();
-    let mem = format_bytes(sys.used_memory());
-    Json(json!(mem))
+    let memu = format_bytes(sys.used_memory());
+    let memt = format_bytes(sys.total_memory());
+    let meminfo = ConvertedMemoryInfo {
+        memory_usage: memu,
+        memory_total: memt,
+    };
+    Json(json!(meminfo))
 }
 
 pub async fn get_diskusage() -> impl IntoResponse {
