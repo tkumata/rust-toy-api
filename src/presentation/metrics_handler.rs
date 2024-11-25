@@ -11,7 +11,14 @@ struct Metrics {
     kernel_name: Option<String>,
     cpu_load: String,
     memory_usage: String,
-    disk_info: Vec<DiskInfo>,
+    disk_info: Vec<ConvertedDiskInfo>,
+}
+
+#[derive(Serialize)]
+struct ConvertedDiskInfo {
+    mount_point: String,
+    available_space: String,
+    total_space: String,
 }
 
 pub async fn get_metrics() -> impl IntoResponse {
@@ -19,14 +26,14 @@ pub async fn get_metrics() -> impl IntoResponse {
 
     let kernel = System::name();
     let load_avg = System::load_average();
-    let used_mem = format_memory_size(sys.used_memory());
-    let disk_info = disks_service::get_storage();
+    let used_mem = format_bytes(sys.used_memory());
+    let diskinfo = convert_disks_info(disks_service::get_storage().await);
 
     let metrics: Metrics = Metrics {
         kernel_name: kernel,
         cpu_load: format!("{}, {}, {}", load_avg.one, load_avg.five, load_avg.fifteen),
         memory_usage: used_mem,
-        disk_info: disk_info.await,
+        disk_info: diskinfo,
     };
 
     Json(json!(metrics))
@@ -39,15 +46,15 @@ pub async fn get_cpuload() -> impl IntoResponse {
 
 pub async fn get_memusage() -> impl IntoResponse {
     let sys = System::new_all();
-    let mem = format_memory_size(sys.used_memory());
+    let mem = format_bytes(sys.used_memory());
     Json(json!(mem))
 }
 
 pub async fn get_diskusage() -> impl IntoResponse {
-    Json(json!(disks_service::get_storage().await))
+    Json(json!(convert_disks_info(disks_service::get_storage().await)))
 }
 
-fn format_memory_size(bytes: u64) -> String {
+fn format_bytes(bytes: u64) -> String {
     const UNITS: &[(&str, u64)] = &[
         ("GB", 1024 * 1024 * 1024),
         ("MB", 1024 * 1024),
@@ -61,4 +68,15 @@ fn format_memory_size(bytes: u64) -> String {
     }
 
     format!("{} Bytes", bytes)
+}
+
+fn convert_disks_info(disks: Vec<DiskInfo>) -> Vec<ConvertedDiskInfo> {
+    disks
+        .into_iter()
+        .map(|disk| ConvertedDiskInfo {
+            mount_point: disk.mount_point,
+            available_space: format_bytes(disk.available_space),
+            total_space: format_bytes(disk.total_space),
+        })
+        .collect()
 }
