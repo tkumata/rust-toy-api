@@ -3,14 +3,9 @@ use sysinfo::Disks;
 
 #[derive(Serialize)]
 pub(crate) struct DiskInfo {
-    mount_point: String,
-    spaces: Spaces,
-}
-
-#[derive(Serialize)]
-struct Spaces {
-    available_space: u64,
-    total_space: u64,
+    pub(crate) mount_point: String,
+    pub(crate) available_space: u64,
+    pub(crate) total_space: u64,
 }
 
 pub async fn get_storage() -> Vec<DiskInfo> {
@@ -24,10 +19,8 @@ pub async fn get_storage() -> Vec<DiskInfo> {
                 .to_path_buf()
                 .to_string_lossy()
                 .to_string(),
-            spaces: Spaces {
-                available_space: disk.available_space(),
-                total_space: disk.total_space(),
-            },
+            available_space: disk.available_space(),
+            total_space: disk.total_space(),
         };
         disk_info.push(diskinfo);
     }

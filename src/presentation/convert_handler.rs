@@ -22,6 +22,5 @@ pub async fn convert_rgb(Json(req_rgb): Json<RequestRgb>) -> impl IntoResponse {
 }
 
 pub async fn convert_bitv4(Json(req_prefix): Json<RequestBitV4>) -> impl IntoResponse {
-    let converted = convert_service::to_subnetmask(req_prefix.bit_length);
-    converted.to_string()
+    convert_service::to_subnetmask(req_prefix.bit_length).to_string()
 }
