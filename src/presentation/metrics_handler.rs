@@ -3,16 +3,16 @@ use serde::Serialize;
 use serde_json::json;
 use sysinfo::System;
 
-use crate::application::disks_service;
-use crate::application::disks_service::DiskInfo;
-use crate::application::memory_service;
-use crate::application::memory_service::MemInfo;
+use crate::application::metrics_service;
+use crate::application::metrics_service::CpuLoad;
+use crate::application::metrics_service::DiskInfo;
+use crate::application::metrics_service::MemInfo;
 
 #[derive(Serialize)]
 struct Metrics {
-    kernel_name: Option<String>,
-    cpu_load: String,
-    memory_usage: Vec<ConvertedMemoryInfo>,
+    kernel_info: String,
+    cpu_load: CpuLoad,
+    memory_usage: ConvertedMemoryInfo,
     disk_info: Vec<ConvertedDiskInfo>,
 }
 
@@ -30,14 +30,14 @@ struct ConvertedMemoryInfo {
 }
 
 pub async fn get_metrics() -> impl IntoResponse {
-    let kernel = System::name();
-    let load_avg = System::load_average();
-    let used_mem = converted_memory_info(memory_service::get_memusage().await);
-    let diskinfo = converted_disks_info(disks_service::get_storage().await);
+    let kernel = format!("{} {}", System::long_os_version().unwrap(), System::kernel_version().unwrap());
+    let load_avg = metrics_service::get_cpuload().await;
+    let used_mem = converted_memory_info(metrics_service::get_memusage().await);
+    let diskinfo = converted_disks_info(metrics_service::get_storage().await);
 
     let metrics: Metrics = Metrics {
-        kernel_name: kernel,
-        cpu_load: format!("{}, {}, {}", load_avg.one, load_avg.five, load_avg.fifteen),
+        kernel_info: kernel,
+        cpu_load: load_avg,
         memory_usage: used_mem,
         disk_info: diskinfo,
     };
@@ -46,19 +46,18 @@ pub async fn get_metrics() -> impl IntoResponse {
 }
 
 pub async fn get_cpuload() -> impl IntoResponse {
-    let load_avg: sysinfo::LoadAvg = System::load_average();
-    Json(json!(load_avg.one))
+    Json(json!(metrics_service::get_cpuload().await))
 }
 
 pub async fn get_memusage() -> impl IntoResponse {
     Json(json!(converted_memory_info(
-        memory_service::get_memusage().await
+        metrics_service::get_memusage().await
     )))
 }
 
 pub async fn get_diskusage() -> impl IntoResponse {
     Json(json!(converted_disks_info(
-        disks_service::get_storage().await
+        metrics_service::get_storage().await
     )))
 }
 
@@ -89,12 +88,9 @@ fn converted_disks_info(disks: Vec<DiskInfo>) -> Vec<ConvertedDiskInfo> {
         .collect()
 }
 
-fn converted_memory_info(memory: Vec<MemInfo>) -> Vec<ConvertedMemoryInfo> {
-    memory
-        .into_iter()
-        .map(|mem| ConvertedMemoryInfo {
-            memory_usage: format_bytes(mem.memory_usage),
-            memory_total: format_bytes(mem.memory_total),
-        })
-        .collect()
+fn converted_memory_info(memory: MemInfo) -> ConvertedMemoryInfo {
+    ConvertedMemoryInfo {
+        memory_usage: format_bytes(memory.memory_usage),
+        memory_total: format_bytes(memory.memory_total),
+    }
 }
