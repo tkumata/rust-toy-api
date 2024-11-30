@@ -18,7 +18,6 @@ pub struct RequestBitV4 {
 pub async fn convert_rgb(Json(req_rgb): Json<RequestRgb>) -> impl IntoResponse {
     let service = ConvertService::new();
     let converted = service.to_hex(req_rgb.r, req_rgb.g, req_rgb.b);
-
     format!("#{}{}{}", converted.r, converted.g, converted.b)
 }
 

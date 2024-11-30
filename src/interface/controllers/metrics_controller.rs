@@ -3,10 +3,10 @@ use serde::Serialize;
 use serde_json::json;
 use sysinfo::System;
 
-use crate::application::metrics_service;
 use crate::application::metrics_service::CpuLoad;
 use crate::application::metrics_service::DiskInfo;
 use crate::application::metrics_service::MemInfo;
+use crate::application::metrics_service::MetricsService;
 
 #[derive(Serialize)]
 struct Metrics {
@@ -30,16 +30,18 @@ struct ConvertedMemoryInfo {
 }
 
 pub async fn get_metrics() -> impl IntoResponse {
+    let service = MetricsService::new();
+
     let kernel = format!(
         "{} {}",
         System::long_os_version().unwrap(),
         System::kernel_version().unwrap()
     );
-    let load_avg = metrics_service::get_cpuload().await;
-    let used_mem = converted_memory_info(metrics_service::get_memusage().await);
-    let diskinfo = converted_disks_info(metrics_service::get_storage().await);
+    let load_avg = service.get_cpuload().await;
+    let used_mem = converted_memory_info(service.get_memusage().await);
+    let diskinfo = converted_disks_info(service.get_storage().await);
 
-    let metrics: Metrics = Metrics {
+    let metrics = Metrics {
         kernel_info: kernel,
         cpu_load: load_avg,
         memory_usage: used_mem,
@@ -50,19 +52,18 @@ pub async fn get_metrics() -> impl IntoResponse {
 }
 
 pub async fn get_cpuload() -> impl IntoResponse {
-    Json(json!(metrics_service::get_cpuload().await))
+    let service = MetricsService::new();
+    Json(json!(service.get_cpuload().await))
 }
 
 pub async fn get_memusage() -> impl IntoResponse {
-    Json(json!(converted_memory_info(
-        metrics_service::get_memusage().await
-    )))
+    let service = MetricsService::new();
+    Json(json!(converted_memory_info(service.get_memusage().await)))
 }
 
 pub async fn get_diskusage() -> impl IntoResponse {
-    Json(json!(converted_disks_info(
-        metrics_service::get_storage().await
-    )))
+    let service = MetricsService::new();
+    Json(json!(converted_disks_info(service.get_storage().await)))
 }
 
 fn format_bytes(bytes: u64) -> String {
