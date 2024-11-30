@@ -1,7 +1,7 @@
 use axum::{response::IntoResponse, response::Json};
 use serde::Deserialize;
 
-use crate::application::convert_service::ConvertService;
+use crate::application::usecases::convert_service::ConvertService;
 
 #[derive(Deserialize)]
 pub struct RequestRgb {
