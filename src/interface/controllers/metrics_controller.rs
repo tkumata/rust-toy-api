@@ -8,23 +8,23 @@ use crate::application::usecases::metrics_service::MetricsService;
 
 #[derive(Serialize)]
 pub struct Metrics {
-    pub kernel_info: String,
-    pub cpu_load: CpuLoad,
-    pub memory_usage: ConvertedMemoryInfo,
-    pub disk_info: Vec<ConvertedDiskInfo>,
+    kernel_info: String,
+    cpu_load: CpuLoad,
+    memory_usage: ConvertedMemoryInfo,
+    disk_info: Vec<ConvertedDiskInfo>,
 }
 
 #[derive(Serialize)]
 pub struct ConvertedDiskInfo {
-    pub(crate) mount_point: String,
-    pub(crate) available_space: String,
-    pub(crate) total_space: String,
+    mount_point: String,
+    available_space: String,
+    total_space: String,
 }
 
 #[derive(Serialize)]
 pub struct ConvertedMemoryInfo {
-    pub(crate) memory_usage: String,
-    pub(crate) memory_total: String,
+    memory_usage: String,
+    memory_total: String,
 }
 
 pub struct MetricsController;
