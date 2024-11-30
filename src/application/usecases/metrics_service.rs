@@ -2,8 +2,6 @@ use serde::Serialize;
 use sysinfo::Disks;
 use sysinfo::System;
 
-pub struct MetricsService;
-
 #[derive(Serialize)]
 pub(crate) struct CpuLoad {
     pub(crate) load_01: f64,
@@ -23,6 +21,8 @@ pub(crate) struct MemInfo {
     pub(crate) memory_usage: u64,
     pub(crate) memory_total: u64,
 }
+
+pub struct MetricsService;
 
 impl MetricsService {
     pub fn new() -> Self {
