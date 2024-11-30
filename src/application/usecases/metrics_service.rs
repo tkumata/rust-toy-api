@@ -29,13 +29,24 @@ impl MetricsService {
         MetricsService
     }
 
-    pub async fn get_cpuload(&self) -> CpuLoad {
+    pub async fn get_cpu(&self) -> CpuLoad {
         let load_avg = System::load_average();
 
         CpuLoad {
             load_01: load_avg.one,
             load_05: load_avg.five,
             load_15: load_avg.fifteen,
+        }
+    }
+
+    pub async fn get_memory(&self) -> MemInfo {
+        let sys = System::new_all();
+        let memu = sys.used_memory();
+        let memt = sys.total_memory();
+
+        MemInfo {
+            memory_usage: memu,
+            memory_total: memt,
         }
     }
 
@@ -57,16 +68,5 @@ impl MetricsService {
         }
 
         disk_info
-    }
-
-    pub async fn get_memusage(&self) -> MemInfo {
-        let sys = System::new_all();
-        let memu = sys.used_memory();
-        let memt = sys.total_memory();
-
-        MemInfo {
-            memory_usage: memu,
-            memory_total: memt,
-        }
     }
 }
