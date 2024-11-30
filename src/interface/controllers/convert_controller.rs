@@ -1,6 +1,7 @@
-use crate::application::convert_service;
 use axum::{response::IntoResponse, response::Json};
 use serde::Deserialize;
+
+use crate::application::convert_service::ConvertService;
 
 #[derive(Deserialize)]
 pub struct RequestRgb {
@@ -15,12 +16,13 @@ pub struct RequestBitV4 {
 }
 
 pub async fn convert_rgb(Json(req_rgb): Json<RequestRgb>) -> impl IntoResponse {
-    let converted: convert_service::ConvertedRgb =
-        convert_service::to_hex(req_rgb.r, req_rgb.g, req_rgb.b);
+    let service = ConvertService::new();
+    let converted = service.to_hex(req_rgb.r, req_rgb.g, req_rgb.b);
 
     format!("#{}{}{}", converted.r, converted.g, converted.b)
 }
 
 pub async fn convert_bitv4(Json(req_prefix): Json<RequestBitV4>) -> impl IntoResponse {
-    convert_service::to_subnetmask(req_prefix.bit_length).to_string()
+    let service = ConvertService::new();
+    service.to_subnetmask(req_prefix.bit_length).to_string()
 }
