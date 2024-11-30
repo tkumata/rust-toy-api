@@ -30,7 +30,11 @@ struct ConvertedMemoryInfo {
 }
 
 pub async fn get_metrics() -> impl IntoResponse {
-    let kernel = format!("{} {}", System::long_os_version().unwrap(), System::kernel_version().unwrap());
+    let kernel = format!(
+        "{} {}",
+        System::long_os_version().unwrap(),
+        System::kernel_version().unwrap()
+    );
     let load_avg = metrics_service::get_cpuload().await;
     let used_mem = converted_memory_info(metrics_service::get_memusage().await);
     let diskinfo = converted_disks_info(metrics_service::get_storage().await);
