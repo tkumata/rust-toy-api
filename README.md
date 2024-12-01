@@ -88,6 +88,8 @@ curl --location 'http://localhost:4000/convert/bitv4' \
 
 結果
 
-```text
-255.255.128.0
+```json
+{
+    "mask": "255.255.128.0"
+}
 ```
