@@ -17,11 +17,10 @@ pub struct RequestBitV4 {
 
 pub async fn convert_rgb(Json(req_rgb): Json<RequestRgb>) -> impl IntoResponse {
     let controller = ConvertController::new();
+
     controller
         .convert_rgb(req_rgb.r, req_rgb.g, req_rgb.b)
         .await
-
-    // format!("#{}{}{}", hex.r, hex.g, hex.b)
 }
 
 pub async fn convert_bitv4(Json(req_prefix): Json<RequestBitV4>) -> impl IntoResponse {
