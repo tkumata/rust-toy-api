@@ -15,6 +15,6 @@ impl ConvertController {
 
     pub async fn convert_bitv4(&self, req_prefix: i32) -> impl IntoResponse {
         let service = ConvertService::new();
-        service.to_subnetmask(req_prefix).to_string()
+        service.to_subnetmask(req_prefix)
     }
 }
