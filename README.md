@@ -72,7 +72,7 @@ curl --location 'http://localhost:4000/metrics'
 ## POST Method
 
 - POST /convert/bitv4 で IP アドレスの bit を netmask に変換します。例 27 -> 255.255.255.224
-- POST /convert/rgb で RGB を hex に変換します。例 55,155,250 -> 379BFA
+- POST /convert/rgb で RGB を hex に変換します。例 55,155,250 -> #379BFA
 
 e.g,
 
