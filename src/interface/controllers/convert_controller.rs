@@ -10,8 +10,7 @@ impl ConvertController {
 
     pub async fn convert_rgb(&self, r: i32, g: i32, b: i32) -> impl IntoResponse {
         let service = ConvertService::new();
-        let hex = service.to_hex(r, g, b);
-        format!("#{}{}{}", hex.r, hex.g, hex.b)
+        service.to_hex(r, g, b)
     }
 
     pub async fn convert_bitv4(&self, req_prefix: i32) -> impl IntoResponse {

@@ -1,3 +1,4 @@
+use axum::{response::IntoResponse, response::Json};
 use serde::Serialize;
 use std::net::IpAddr;
 
@@ -5,9 +6,7 @@ pub struct ConvertService;
 
 #[derive(Serialize)]
 pub struct ConvertedRgb {
-    pub r: String,
-    pub g: String,
-    pub b: String,
+    pub hex: String,
 }
 
 fn calc_hex(value: i32) -> String {
@@ -20,12 +19,11 @@ impl ConvertService {
         ConvertService
     }
 
-    pub fn to_hex(&self, r: i32, g: i32, b: i32) -> ConvertedRgb {
-        ConvertedRgb {
-            r: calc_hex(r).to_string(),
-            g: calc_hex(g).to_string(),
-            b: calc_hex(b).to_string(),
-        }
+    pub fn to_hex(&self, r: i32, g: i32, b: i32) -> impl IntoResponse {
+        let converted = ConvertedRgb {
+            hex: format!("#{}{}{}", calc_hex(r), calc_hex(g), calc_hex(b))
+        };
+        Json(converted)
     }
 
     pub fn to_subnetmask(&self, bit_length: i32) -> IpAddr {
