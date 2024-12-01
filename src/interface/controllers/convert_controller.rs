@@ -1,27 +1,21 @@
-use axum::{response::IntoResponse, response::Json};
-use serde::Deserialize;
-
 use crate::application::usecases::convert_service::ConvertService;
+use axum::response::IntoResponse;
 
-#[derive(Deserialize)]
-pub struct RequestRgb {
-    r: i32,
-    g: i32,
-    b: i32,
-}
+pub struct ConvertController;
 
-#[derive(Deserialize)]
-pub struct RequestBitV4 {
-    bit_length: i32,
-}
+impl ConvertController {
+    pub fn new() -> Self {
+        ConvertController
+    }
 
-pub async fn convert_rgb(Json(req_rgb): Json<RequestRgb>) -> impl IntoResponse {
-    let service = ConvertService::new();
-    let converted = service.to_hex(req_rgb.r, req_rgb.g, req_rgb.b);
-    format!("#{}{}{}", converted.r, converted.g, converted.b)
-}
+    pub async fn convert_rgb(&self, r: i32, g: i32, b: i32) -> impl IntoResponse {
+        let service = ConvertService::new();
+        let hex = service.to_hex(r, g, b);
+        format!("#{}{}{}", hex.r, hex.g, hex.b)
+    }
 
-pub async fn convert_bitv4(Json(req_prefix): Json<RequestBitV4>) -> impl IntoResponse {
-    let service = ConvertService::new();
-    service.to_subnetmask(req_prefix.bit_length).to_string()
+    pub async fn convert_bitv4(&self, req_prefix: i32) -> impl IntoResponse {
+        let service = ConvertService::new();
+        service.to_subnetmask(req_prefix).to_string()
+    }
 }
