@@ -1,7 +1,9 @@
+use serde::Serialize;
 use std::net::IpAddr;
 
 pub struct ConvertService;
 
+#[derive(Serialize)]
 pub struct ConvertedRgb {
     pub r: String,
     pub g: String,
