@@ -15,15 +15,18 @@ pub struct RequestBitV4 {
     bit_length: i32,
 }
 
-pub async fn convert_rgb(Json(req_rgb): Json<RequestRgb>) -> impl IntoResponse {
-    let controller = ConvertController::new();
+pub struct ConvertHandler;
 
-    controller
-        .convert_rgb(req_rgb.r, req_rgb.g, req_rgb.b)
-        .await
-}
+impl ConvertHandler {
+    pub async fn convert_rgb(Json(req_rgb): Json<RequestRgb>) -> impl IntoResponse {
+        let controller = ConvertController::new();
+        controller
+            .convert_rgb(req_rgb.r, req_rgb.g, req_rgb.b)
+            .await
+    }
 
-pub async fn convert_bitv4(Json(req_prefix): Json<RequestBitV4>) -> impl IntoResponse {
-    let controller = ConvertController::new();
-    controller.convert_bitv4(req_prefix.bit_length).await
+    pub async fn convert_bitv4(Json(req_prefix): Json<RequestBitV4>) -> impl IntoResponse {
+        let controller = ConvertController::new();
+        controller.convert_bitv4(req_prefix.bit_length).await
+    }
 }
