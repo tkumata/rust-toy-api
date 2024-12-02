@@ -7,20 +7,18 @@ use axum::{
     Router,
 };
 use presentation::handlers::convert_handler::ConvertHandler;
-use presentation::handlers::dice_handler;
-use presentation::handlers::healthcheck_handler;
+use presentation::handlers::generic_handler::GenericHandler;
 use presentation::handlers::metrics_handler::MetricsHandler;
-use presentation::handlers::sleep_handler;
 
 #[tokio::main(flavor = "multi_thread", worker_threads = 16)]
 async fn main() {
     let app = Router::new()
         // healthcheck
-        .route("/healthcheck", get(healthcheck_handler::healthcheck))
+        .route("/healthcheck", get(GenericHandler::healthcheck))
         // Return random number
-        .route("/roll/1d6", get(dice_handler::roll_1d6))
+        .route("/roll/1d6", get(GenericHandler::roll_1d6))
         // Sleep
-        .route("/sleep/:wait_time", get(sleep_handler::make_sleep))
+        .route("/sleep/:wait_time", get(GenericHandler::make_sleep))
         // Get metrics.
         .route("/metrics", get(MetricsHandler::get_metrics))
         .route("/metrics/kernel", get(MetricsHandler::get_kernel))
