@@ -1,6 +1,6 @@
 # 🗑️ Clutter Web API 🌐
 
-A Web API built with Rust.
+A clutter Web API built with Rust.
 
 ## 📥 GET Method
 
