@@ -1,26 +1,24 @@
-# ガラクタ API
+# 🗑️ Clutter Web API 🌐
 
-Rust で書いた簡素な Web API です。
+A clutter Web API built with Rust.
 
-## GET Method
+## 📥 GET Method
 
-- GET /healthcheck で OK を返します。
-- GET /metrics でホストの CPU Load / Disk Usage / Memory Usage を取得します。
-- GET /metrics/cpu で CPU Load を取得します。
-- GET /metrics/memory でメモリの利用状況を取得します。
-- GET /metrics/storage でストレージの利用状況を取得します。
-- GET /dice/roll_1d6 で 1 〜 6 をランダムで返します。
-- GET /sleep/i32 で i32 秒 sleep します。threading 確認用です。例 /sleep/30
+- **GET /healthcheck**: Returns `OK`.
+- **GET /metrics**: Retrieves host metrics, including CPU Load, Disk Usage, and Memory Usage.
+- **GET /metrics/cpu**: Retrieves CPU Load metrics.
+- **GET /metrics/memory**: Retrieves memory usage metrics.
+- **GET /metrics/storage**: Retrieves storage usage metrics.
+- **GET /dice/roll_1d6**: Returns a random number between 1 and 6.
+- **GET /sleep/{i32}**: Sleeps for `{i32}` seconds (for threading tests). e.g, `/sleep/30`.
 
-e.g,
-
-リクエスト
+### 🔄 Request (GET)
 
 ```shell
 curl --location 'http://localhost:4000/metrics'
 ```
 
-結果
+### ✅ Response (GET)
 
 ```json
 {
@@ -69,14 +67,12 @@ curl --location 'http://localhost:4000/metrics'
 }
 ```
 
-## POST Method
+## 📤 POST Method
 
-- POST /convert/bitv4 で IP アドレスの bit を netmask に変換します。例 27 -> 255.255.255.224
-- POST /convert/rgb で RGB を hex に変換します。例 55,155,250 -> #379BFA
+- **POST /convert/bitv4**: Converts an IP bit length to a netmask. Example: `27 -> 255.255.255.224`.
+- **POST /convert/rgb**: Converts RGB values to a hexadecimal color code. Example: `55, 155, 250 -> #379BFA`.
 
-e.g,
-
-リクエスト
+### 🔄 Request (POST)
 
 ```shell
 curl --location 'http://localhost:4000/convert/bitv4' \
@@ -86,7 +82,7 @@ curl --location 'http://localhost:4000/convert/bitv4' \
 }'
 ```
 
-結果
+### ✅ Response (POST)
 
 ```json
 {
