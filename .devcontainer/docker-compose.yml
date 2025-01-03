@@ -15,3 +15,6 @@ services:
 
     # Use "forwardPorts" in **devcontainer.json** to forward an app port locally. 
     # (Adding the "ports" property to this file will not forward from a Codespace.)
+    ports:
+      - "4000:4000"
+      - "4123:4123/udp"
