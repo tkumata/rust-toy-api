@@ -89,3 +89,8 @@ curl --location 'http://localhost:4000/convert/bitv4' \
     "mask": "255.255.128.0"
 }
 ```
+
+## Proxy to UDP 123
+
+- Listen UDP port 4123.
+- Proxy to UDP port 123 at NICT Time Server.
